@@ -1,14 +1,15 @@
 <?php
 
-namespace Omnipay\Ticketasa\Message;
+namespace Omnipay\Ticketasavisa\Message;
 
-use Omnipay\Ticketasa\Exception\InvalidResponseData;
-use Omnipay\Ticketasa\Support\Cryptor;
-use Omnipay\Ticketasa\Support\ParametersInterface;
-use Omnipay\Ticketasa\Constants;
+use Omnipay\Ticketasavisa\Exception\InvalidResponseData;
+use Omnipay\Ticketasavisa\Support\Cryptor;
+use Omnipay\Ticketasavisa\Support\ParametersInterface;
+use Omnipay\Ticketasavisa\Constants;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
-    implements ParametersInterface {
+implements ParametersInterface
+{
 
     protected $data = [];
     protected $commonHeaders = [
@@ -30,14 +31,15 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         ],
     ];
 
-    public function sendData($data) {
+    public function sendData($data)
+    {
 
         switch ($this->getMessageClassName()) {
 
             case "HostedPage":
                 return $this->response = new HostedPageResponse($this, $data);
 
-            case "TransactionStatus" :
+            case "TransactionStatus":
 
                 $this->addCommonHeaders($data);
 
@@ -52,16 +54,17 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
                 return $this->response = new TransactionStatusResponse($this, $httpResponse);
 
-            case "RefundPayment" :
+            case "RefundPayment":
                 $this->addCommonHeaders($data);
-                unset($data[Constants::CONFIG_KEY_PWTID]);
-                unset($data[Constants::CONFIG_KEY_PWTPWD]);
+                unset($data[Constants::CONFIG_MERCHANT_ID]);
+                unset($data[Constants::CONFIG_PUBLIC_KEY]);
+                unset($data[Constants::CONFIG_PRIVATE_KEY]);
 
                 $requestBody = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
                 $uri = $this->getEndpoint() . $this->PWTServices[$this->getMessageClassName()]["request"];
 
-//                  print_r($requestBody);
+                //                  print_r($requestBody);
 
                 $httpResponse = $this->httpClient->request(
                     "POST",
@@ -79,74 +82,101 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         }
     }
 
-    protected function addCommonHeaders($data): AbstractRequest {
-        $this->commonHeaders['PowerTranz-PowerTranzId'] = $this->getPWTId();
-        $this->commonHeaders['PowerTranz-PowerTranzPassword'] = $this->getPWTPwd();
+    protected function addCommonHeaders($data): AbstractRequest
+    {
+        $this->commonHeaders['merchant_id'] = $this->getMerchantId();
+        $this->commonHeaders['merchant_key_id'] = $this->getPublicKey();
+        $this->commonHeaders['merchant_secret_key'] = $this->getPrivateKey();
 
         return $this;
     }
 
-    protected function getEndpoint() {
+    protected function getEndpoint()
+    {
         return ($this->getTestMode()) ? Constants::API_STAGING : Constants::API_PRODUCTION;
     }
 
-    public function getMessageClassName() {
+    public function getMessageClassName()
+    {
         $className = explode("\\", get_called_class());
 
         return array_pop($className);
     }
 
-    public function setPWTId($PWTID) {
-        return $this->setParameter(Constants::CONFIG_KEY_PWTID, $PWTID);
+    public function getMerchantId()
+    {
+        return $this->getParameter(Constants::CONFIG_MERCHANT_ID);
     }
 
-    public function getPWTId() {
-        return $this->getParameter(Constants::CONFIG_KEY_PWTID);
+    public function setMerchantId($value)
+    {
+        return $this->setParameter(Constants::CONFIG_MERCHANT_ID, $value);
     }
 
-    public function setPWTPwd($PWD) {
-        return $this->setParameter(Constants::CONFIG_KEY_PWTPWD, $PWD);
+    public function getPublicKey()
+    {
+        return $this->getParameter(Constants::CONFIG_PUBLIC_KEY);
     }
 
-    public function getPWTPwd() {
-        return $this->getParameter(Constants::CONFIG_KEY_PWTPWD);
+    public function setPublicKey($value)
+    {
+        return $this->setParameter(Constants::CONFIG_PUBLIC_KEY, $value);
     }
 
-    protected function createQueryParamProtect($data) {
+    public function getPrivateKey()
+    {
+        return $this->getParameter(Constants::CONFIG_PRIVATE_KEY);
+    }
+
+    public function setPrivateKey($value)
+    {
+        return $this->setParameter(Constants::CONFIG_PRIVATE_KEY, $value);
+    }
+
+    protected function createQueryParamProtect($data)
+    {
         return json_encode($data);
     }
 
-    public function getTransactionId() {
+    public function getTransactionId()
+    {
         //  print_r($this->getParameter(Constants::CONFIG_TRANSACTION_IDENTIFIER));
         return $this->getParameter(Constants::CONFIG_TRANSACTION_IDENTIFIER);
     }
 
-    public function setTransactionId($value) {
+    public function setTransactionId($value)
+    {
         //  print_r($value);
         return $this->setParameter(Constants::CONFIG_TRANSACTION_IDENTIFIER, $value);
     }
 
-    public function setOrderIdentifier($value) {
+    public function setOrderIdentifier($value)
+    {
         return $this->setParameter(Constants::GATEWAY_ORDER_IDENTIFIER, $value);
     }
 
-    public function getOrderIdentifier() {
+    public function getOrderIdentifier()
+    {
         return $this->getParameter(Constants::GATEWAY_ORDER_IDENTIFIER);
     }
 
-    public function setOrderNumberPrefix($value) {
+    public function setOrderNumberPrefix($value)
+    {
         return $this->setParameter(Constants::GATEWAY_ORDER_IDENTIFIER_PREFIX, $value);
     }
 
-    public function getOrderNumberPrefix() {
+    public function getOrderNumberPrefix()
+    {
         return $this->getParameter(Constants::GATEWAY_ORDER_IDENTIFIER_PREFIX);
     }
 
-    public function setDiscount($value) {
+    public function setDiscount($value)
+    {
         return $this->setParameter(Constants::CONFIG_APPLY_DISCOUNT, $value);
     }
 
-    public function getDiscount() {
+    public function getDiscount()
+    {
         return $this->getParameter(Constants::CONFIG_APPLY_DISCOUNT);
     }
 }

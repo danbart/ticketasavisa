@@ -1,8 +1,9 @@
 <?php
 
-namespace Omnipay\Ticketasa;
+namespace Omnipay\Ticketasavisa;
 
-class Constants {
+class Constants
+{
 
     const API_STAGING                      = 'https://staging.ptranz.com/api/';
     const API_PRODUCTION                   = 'https://gateway.ptranz.com/api/';
@@ -11,8 +12,9 @@ class Constants {
     const DRIVER_NAME                      = "TicketAsa - Payment Gateway";
     const PLATFORM_TA_UAT                  = 'https://ticketasa-cred.mypeopleapps.com/eventix';
     const PLATFORM_TA_PROD                 = 'https://credomatic.ticketasa.gt/eventix';
-    const CONFIG_KEY_PWTID                 = 'PWTId';
-    const CONFIG_KEY_PWTPWD                = 'PWTpwd';
+    const CONFIG_MERCHANT_ID               = 'MerchantId';
+    const CONFIG_PUBLIC_KEY                = 'PublicKey';
+    const CONFIG_PRIVATE_KEY               = 'PrivateKey';
     const CONFIG_KEY_NOTIFY_URL            = 'notifyURL';
     const CONFIG_KEY_RETURN_URL            = 'returnURL';
     const GATEWAY_ORDER_IDENTIFIER_PREFIX  = 'orderNumberPrefix';

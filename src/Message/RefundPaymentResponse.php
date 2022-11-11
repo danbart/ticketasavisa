@@ -1,10 +1,12 @@
 <?php
 
-namespace Omnipay\Ticketasa\Message;
+namespace Omnipay\Ticketasavisa\Message;
 
-class RefundPaymentResponse extends AbstractResponse {
+class RefundPaymentResponse extends AbstractResponse
+{
 
-    public function isSuccessful() {
+    public function isSuccessful()
+    {
         if (!empty($this->getData()["IsoResponseCode"] == "00")) {
             return true;
         }
@@ -12,43 +14,53 @@ class RefundPaymentResponse extends AbstractResponse {
         return false;
     }
 
-    public function getApproved() {
+    public function getApproved()
+    {
         return $this->getData()["Approved"];
     }
 
-    public function getTotalAmount() {
+    public function getTotalAmount()
+    {
         return $this->getData()["TotalAmount"];
     }
 
-    public function getRRN() {
+    public function getRRN()
+    {
         return $this->getData()["RRN"];
     }
 
-    public function getExternalIdentifier() {
+    public function getExternalIdentifier()
+    {
         return $this->getData()["ExternalIdentifier"];
     }
 
-    public function getOrderIdentifier() {
+    public function getOrderIdentifier()
+    {
         return $this->getData()["OrderIdentifier"];
     }
 
-    public function getOriginalTrxnIdentifier() {
+    public function getOriginalTrxnIdentifier()
+    {
         return $this->getData()["OriginalTrxnIdentifier"];
     }
 
-    public function getErrorCode() {
+    public function getErrorCode()
+    {
         return $this->getData()["Errors"][0]["Code"];
     }
 
-    public function getErrorMessage() {
+    public function getErrorMessage()
+    {
         return $this->getData()["Errors"][0]["Message"];
     }
 
-    public function getIsoResponseCode() {
+    public function getIsoResponseCode()
+    {
         return $this->getData()["IsoResponseCode"];
     }
 
-    public function getResponseMessage() {
+    public function getResponseMessage()
+    {
         return $this->getData()["ResponseMessage"];
     }
 }

@@ -1,4 +1,4 @@
-# Omnipay - TicketAsa 1.0.0
+# Omnipay - TicketAsa Visa 1.0.0
 
 **TicketAsaGT Commerce gateway for the Omnipay PHP payment processing library**
 
@@ -12,7 +12,7 @@ PHP 5.3+. This package implements TicketAsaGT 2.4 support for Omnipay.
 Via Composer
 
 ``` bash
-$ composer require vincsis/omnipay-ticketasa
+$ composer require danbart/omnipay-ticketasavisa
 ```
 
 ## Gateway Operation Defaults
@@ -32,11 +32,12 @@ For general usage instructions, please see the main [Omnipay](https://github.com
 
 use Omnipay\Omnipay;
 try {
-    $gateway = Omnipay::create('Ticketasa');
+    $gateway = Omnipay::create('Ticketasavisa');
     $gateway
         ->setTestMode(true)  // false to use productions links  , true to use test links 
-        ->setPWTId('xxxxxxxx') 
-        ->setPWTPwd('xxxxxxxx')
+        ->setMerchantId('xxxxxxxx') 
+        ->setPublicKey('xxxxxxxx') 
+        ->setPrivateKey('xxxxxxxx')
         // **Required and must be https://
         ->setNotifyUrl('https://localhost/webhook.php')
         // **Required and must be https://    
@@ -94,11 +95,12 @@ Response transaction from TicketasaGT.
 
 use Omnipay\Omnipay;
 try {
-    $gateway = Omnipay::create('Ticketasa');
+    $gateway = Omnipay::create('Ticketasavisa');
     $gateway
         ->setTestMode(true)  // false to use productions links  , true to use test links 
-        ->setPWTId('xxxxxxxx') 
-        ->setPWTPwd('xxxxxxxx');
+        ->setMerchantId('xxxxxxxx') 
+        ->setPublicKey('xxxxxxxx') 
+        ->setPrivateKey('xxxxxxxx');
         
 
     
@@ -160,11 +162,12 @@ Response fetch transaction from powerTranz.
 
 use Omnipay\Omnipay;
 try {
-    $gateway = Omnipay::create('Ticketasa');
+    $gateway = Omnipay::create('Ticketasavisa');
     $gateway
         ->setTestMode(true)  // false to use productions links  , true to use test links 
-        ->setPWTId('xxxxxxxx') 
-        ->setPWTPwd('xxxxxxxx');
+        ->setMerchantId('xxxxxxxx') 
+        ->setPublicKey('xxxxxxxx') 
+        ->setPrivateKey('xxxxxxxx');
     
     $transactionData = [      
          'amount' => '1.00',   // Mandatory         

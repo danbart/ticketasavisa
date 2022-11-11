@@ -1,5 +1,5 @@
 {
-    "name": "vincsis/omnipay-ticketasa",
+    "name": "danbart/ticketasavisa",
     "description": "Ticketasa support for omnipay payment processing library",
     "type": "library",
     "require": {
@@ -9,12 +9,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Omnipay\\Ticketasa\\": "src/"
+            "Omnipay\\Ticketasavisa\\": "src/"
         }
     },
     "authors": [
         {
-            "name": "vicente suc - PEOPLE APPS"
+            "name": "Danilo Solórzano - PEOPLE APPS"
         }
     ],
     "minimum-stability": "dev"

@@ -1,11 +1,12 @@
 <?php
 
-namespace Omnipay\Ticketasa\Message;
+namespace Omnipay\Ticketasavisa\Message;
 
-use Omnipay\Ticketasa\Constants;
-use Omnipay\Ticketasa\Exception\InvalidResponseData;
+use Omnipay\Ticketasavisa\Constants;
+use Omnipay\Ticketasavisa\Exception\InvalidResponseData;
 
-class RefundPayment extends AbstractRequest {
+class RefundPayment extends AbstractRequest
+{
 
     const PARAM_IDENTIFIER          = 'TransactionIdentifier';
     const PARAM_TOTAL_AMOUNT        = 'TotalAmount';
@@ -25,7 +26,8 @@ class RefundPayment extends AbstractRequest {
     const PARAM_ADDRESS             = 'AddressMatch';
     protected $TransactionDetails = [];
 
-    public function getData() {
+    public function getData()
+    {
         $this->TransactionDetails[self::PARAM_REFUND] = true;
         $this->TransactionDetails[self::PARAM_IDENTIFIER] = $this->getTransactionId(); // str_replace("-", "", $this->guidv4()) ;
         $this->TransactionDetails[self::PARAM_TOTAL_AMOUNT] = $this->getAmount();
@@ -48,14 +50,15 @@ class RefundPayment extends AbstractRequest {
         return $this->data;
     }
 
-    protected function validateTransactionDetails() {
+    protected function validateTransactionDetails()
+    {
         if (!empty($this->getTransactionId())) {
             if (!empty($this->getAmount()) && is_numeric($this->getAmount())) {
-                if (!empty($this->getPWTId()) && !empty($this->getPWTPwd())) {
+                if (!empty($this->getMerchantId()) && !empty($this->getPublicKey()) && !empty($this->getPrivateKey())) {
 
                     $this->data = $this->TransactionDetails;
                 } else {
-                    throw new InvalidResponseData("PowerTranz Credentials are invalid");
+                    throw new InvalidResponseData("Merchant Credentials are invalid");
                 }
             } else {
                 throw new InvalidResponseData("Total Amount is not valid");
@@ -65,12 +68,15 @@ class RefundPayment extends AbstractRequest {
         }
     }
 
-    protected function setCredentials() {
-        $this->data[Constants::CONFIG_KEY_PWTID] = $this->getPWTId();
-        $this->data[Constants::CONFIG_KEY_PWTPWD] = $this->getPWTPwd();
+    protected function setCredentials()
+    {
+        $this->data[Constants::CONFIG_MERCHANT_ID] = $this->getMerchantId();
+        $this->data[Constants::CONFIG_PUBLIC_KEY] = $this->getPublicKey();
+        $this->data[Constants::CONFIG_PRIVATE_KEY] = $this->getPrivateKey();
     }
 
-    protected function guidv4($data = null) {
+    protected function guidv4($data = null)
+    {
         // Generate 16 bytes (128 bits) of random data or use the data passed into the function.
         $data = $data ?? random_bytes(16);
         assert(strlen($data) == 16);

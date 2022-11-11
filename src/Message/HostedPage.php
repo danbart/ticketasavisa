@@ -1,11 +1,12 @@
 <?php
 
-namespace Omnipay\Ticketasa\Message;
+namespace Omnipay\Ticketasavisa\Message;
 
-use Omnipay\Ticketasa\Constants;
-use Omnipay\Ticketasa\Exception\InvalidResponseData;
+use Omnipay\Ticketasavisa\Constants;
+use Omnipay\Ticketasavisa\Exception\InvalidResponseData;
 
-class HostedPage extends AbstractRequest {
+class HostedPage extends AbstractRequest
+{
 
     const PARAM_SOURCE_HOLDER_NAME = "CardHolderName";
     const PARAM_TOTAL_AMOUNT       = 'TotalAmount';
@@ -17,7 +18,8 @@ class HostedPage extends AbstractRequest {
     const PARAM_NOTIFY_URL             = 'NotifyResponseURL';
     const PARAM_RETURN_URL             = 'ReturnURL';
 
-    public function getData() {
+    public function getData()
+    {
 
         $this->setTransactionDetails();
         $this->setCardDetails();
@@ -28,23 +30,25 @@ class HostedPage extends AbstractRequest {
         return $this->data;
     }
 
-    protected function setTransactionDetails() {
+    protected function setTransactionDetails()
+    {
 
         // $this->TransactionDetails[self::PARAM_ORDER_IDENTIFIER] = $this->getOrderIdentifier();
         $this->TransactionDetails[self::PARAM_TOTAL_AMOUNT] = $this->getAmount();
         $this->validateTransactionDetails();
     }
 
-    protected function validateTransactionDetails() {
+    protected function validateTransactionDetails()
+    {
         if (!empty($this->getTransactionId())) {
             if (!empty($this->getNotifyUrl())) {
                 if (!empty($this->getReturnUrl())) {
                     if (!empty($this->getAmount()) && is_numeric($this->getAmount())) {
-                        if (!empty($this->getPWTId()) && !empty($this->getPWTPwd())) {
+                        if (!empty($this->getMerchantId()) && !empty($this->getPublicKey()) && !empty($this->getPrivateKey())) {
 
                             $this->data = $this->TransactionDetails;
                         } else {
-                            throw new InvalidResponseData("PowerTranz Credentials are invalid");
+                            throw new InvalidResponseData("Merchant Credentials are invalid");
                         }
                     } else {
                         throw new InvalidResponseData("Total Amount is not valid");
@@ -60,7 +64,8 @@ class HostedPage extends AbstractRequest {
         }
     }
 
-    protected function setCardDetails() {
+    protected function setCardDetails()
+    {
         $CardDetails = [];
         $CreditCard = $this->getCard();
 
@@ -73,22 +78,27 @@ class HostedPage extends AbstractRequest {
         }
     }
 
-    protected function setCredentials() {
-        $this->data[Constants::CONFIG_KEY_PWTID] = $this->getPWTId();
-        $this->data[Constants::CONFIG_KEY_PWTPWD] = $this->getPWTPwd();
+    protected function setCredentials()
+    {
+        $this->data[Constants::CONFIG_MERCHANT_ID] = $this->getMerchantId();
+        $this->data[Constants::CONFIG_PUBLIC_KEY] = $this->getPublicKey();
+        $this->data[Constants::CONFIG_PRIVATE_KEY] = $this->getPrivateKey();
     }
 
-    protected function setUrls() {
+    protected function setUrls()
+    {
         $this->data[self::PARAM_NOTIFY_URL] = $this->getNotifyUrl();
         $this->data[self::PARAM_RETURN_URL] = $this->getReturnUrl();
     }
 
-    protected function setTransaction() {
+    protected function setTransaction()
+    {
         $this->data[self::PARAM_TRANSACTION_IDENTIFIER] = $this->getTransactionId();
         $this->data[self::PARAM_ORDER_IDENTIFIER] = !empty($this->getTransactionId()) ? Constants::PREFIX_ORDER . $this->getTransactionId() : null;
     }
 
-    protected function guidv4($data = null) {
+    protected function guidv4($data = null)
+    {
         // Generate 16 bytes (128 bits) of random data or use the data passed into the function.
         $data = $data ?? random_bytes(16);
         assert(strlen($data) == 16);

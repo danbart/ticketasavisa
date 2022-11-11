@@ -1,7 +1,7 @@
 <?php
 
-namespace Omnipay\Ticketasa\Exception;
+namespace Omnipay\Ticketasavisa\Exception;
 
-class InvalidResponseData extends \Exception{
-
+class InvalidResponseData extends \Exception
+{
 }

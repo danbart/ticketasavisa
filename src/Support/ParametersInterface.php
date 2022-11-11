@@ -1,16 +1,20 @@
 <?php
 
-namespace Omnipay\Ticketasa\Support;
+namespace Omnipay\Ticketasavisa\Support;
 
 interface ParametersInterface
 {
-    public function setPWTId($PWTID);
+    public function setMerchantId($PWTID);
 
-    public function getPWTId();
+    public function getMerchantId();
 
-    public function setPWTPwd($PWD);
+    public function setPublicKey($PWD);
 
-    public function getPWTPwd();
+    public function getPublicKey();
+
+    public function setPrivateKey($PWD);
+
+    public function getPrivateKey();
 
     public function setDiscount($value);
 
