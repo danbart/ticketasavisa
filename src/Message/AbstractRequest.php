@@ -22,7 +22,7 @@ implements ParametersInterface
             "response" => "HostedPageResponse",
         ],
         "TransactionStatus" => [
-            "request"  => "Transactions",
+            "request"  => "transactions",
             "response" => "TransactionStatusResponse",
         ],
         "RefundPayment"     => [
@@ -43,7 +43,17 @@ implements ParametersInterface
 
                 $this->addCommonHeaders($data);
 
-                $uri = $this->getEndpoint() . $this->PWTServices[$this->getMessageClassName()]["request"] . "/" . $data["TransactionIdentifier"];
+                $endpoint = "tss/v2/" . $this->PWTServices[$this->getMessageClassName()]["request"] . "/" . $data["TransactionIdentifier"];
+                $uri = $this->getEndpoint() . $endpoint;
+
+                $this->commonHeaders["Signature"] = strval($this->getSignature($endpoint, 'get', null));
+                $this->commonHeaders["Host"] = $this->getEndpoint();
+                $this->commonHeaders["v-c-merchant-id"] = $this->getMerchantId();
+                $this->commonHeaders["Date"] = $this->getDate();
+
+                unset($this->commonHeaders["merchant_id"]);
+                unset($this->commonHeaders["merchant_key_id"]);
+                unset($this->commonHeaders["merchant_secret_key"]);
 
                 $httpResponse = $this->httpClient->request(
                     "GET",
@@ -178,5 +188,54 @@ implements ParametersInterface
     public function getDiscount()
     {
         return $this->getParameter(Constants::CONFIG_APPLY_DISCOUNT);
+    }
+
+    public function getDate()
+    {
+        return date("D, d M Y G:i:s");
+    }
+
+    // Function used to generate the digest for the given payload
+    public function getGenerateDigest($requestPayload)
+    {
+        $utf8EncodedString = utf8_encode($requestPayload);
+        $digestEncode = hash("sha256", $utf8EncodedString, true);
+        return base64_encode($digestEncode);
+    }
+
+
+    // Function to generate the HTTP Signature
+    // param: resourcePath - denotes the resource being accessed
+    // param: httpMethod - denotes the HTTP verb
+    // param: currentDate - stores the current timestamp
+    public function getSignature($resourcePath, $httpMethod, $body)
+    {
+
+        $digest = "";
+
+        if ($httpMethod == "get") {
+            $signatureString = "host: " . $this->getEndpoint() . "\ndate: " . $this->getDate() . "\n(request-target): " . $httpMethod . " " . $resourcePath . "\nv-c-merchant-id: " . $this->getMerchantId();
+            $headerString = "host date (request-target) v-c-merchant-id";
+        } else if ($httpMethod == "post") {
+            //Get digest data        
+            $digest = $this->getGenerateDigest($body);
+
+            $signatureString = "host: " . $this->getEndpoint() . "\ndate: " . $this->getDate() . "\n(request-target): " . $httpMethod . " " . $resourcePath . "\ndigest: SHA-256=" . $digest . "\nv-c-merchant-id: " . $this->getMerchantId();
+            $headerString = "host date (request-target) digest v-c-merchant-id";
+        }
+
+        $signatureByteString = utf8_encode($signatureString);
+        $decodeKey = base64_decode($this->getPrivateKey());
+        $signature = base64_encode(hash_hmac("sha256", $signatureByteString, $decodeKey, true));
+        $signatureHeader = array(
+            'keyid="' . $this->getPublicKey() . '"',
+            'algorithm="HmacSHA256"',
+            'headers="' . $headerString . '"',
+            'signature="' . $signature . '"',
+        );
+
+        $signatureToken = implode(", ", $signatureHeader);
+
+        return $signatureToken;
     }
 }

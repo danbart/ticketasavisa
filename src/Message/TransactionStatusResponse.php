@@ -21,26 +21,26 @@ class TransactionStatusResponse extends AbstractResponse
 
     public function getTransactionId()
     {
-        return $this->getData()["TransactionIdentifier"];
+        return $this->getData()["reconciliationId"];
     }
 
     public function getTotalAmount()
     {
-        return $this->getData()["TotalAmount"];
+        return $this->getData()["orderInformation"]["amountDetails"]["totalAmount"];
     }
 
     public function getAuthorizationCode()
     {
-        return $this->getData()["AuthorizationCode"];
-    }
-
-    public function getLastCaptureDateTime()
-    {
-        return $this->getData()["OrderSummary"]["LastCaptureDateTime"];
+        return $this->getData()["applicationInformation"]["reasonCode"];
     }
 
     public function getTransactionDateTime()
     {
-        return $this->getData()["TransactionDateTime"];
+        return $this->getData()["submitTimeUTC"];
+    }
+
+    public function getMessage()
+    {
+        return $this->getData()["applicationInformation"]["applications"][0]["rMessage"];
     }
 }

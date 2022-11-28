@@ -5,11 +5,11 @@ namespace Omnipay\Ticketasavisa;
 class Constants
 {
 
-    const API_STAGING                      = 'https://staging.ptranz.com/api/';
-    const API_PRODUCTION                   = 'https://gateway.ptranz.com/api/';
+    const API_STAGING                      = 'https://apitest.cybersource.com/';
+    const API_PRODUCTION                   = 'https://api.cybersource.com/';
     const SPI_STAGING                      = 'https://staging.ptranz.com/api/spi/';
     const SPI_PRODUCTION                   = 'https://gateway.ptranz.com/api/spi/';
-    const DRIVER_NAME                      = "TicketAsa - Payment Gateway";
+    const DRIVER_NAME                      = "TicketAsaVisa - Payment Gateway";
     const PLATFORM_TA_UAT                  = 'https://ticketasa-cred.mypeopleapps.com/eventix';
     const PLATFORM_TA_PROD                 = 'https://credomatic.ticketasa.gt/eventix';
     const CONFIG_MERCHANT_ID               = 'MerchantId';
