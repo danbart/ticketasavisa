@@ -7,7 +7,7 @@ class TransactionStatusResponse extends AbstractResponse
 
     public function isSuccessful()
     {
-        if (!empty($this->getData()["IsoResponseCode"] == "00")) {
+        if (!empty($this->getData()["code"] == "400") && !empty($this->getData()["code"] == "404")) {
             return true;
         }
 
@@ -21,26 +21,26 @@ class TransactionStatusResponse extends AbstractResponse
 
     public function getTransactionId()
     {
-        return $this->getData()["reconciliationId"];
+        return $this->getData()["data"]["reconciliationId"];
     }
 
     public function getTotalAmount()
     {
-        return $this->getData()["orderInformation"]["amountDetails"]["totalAmount"];
+        return $this->getData()["data"]["orderInformation"]["amountDetails"]["totalAmount"];
     }
 
     public function getAuthorizationCode()
     {
-        return $this->getData()["applicationInformation"]["reasonCode"];
+        return $this->getData()["data"]["applicationInformation"]["reasonCode"];
     }
 
     public function getTransactionDateTime()
     {
-        return $this->getData()["submitTimeUTC"];
+        return $this->getData()["data"]["submitTimeUTC"];
     }
 
     public function getMessage()
     {
-        return $this->getData()["applicationInformation"]["applications"][0]["rMessage"];
+        return $this->getData()["data"]["applicationInformation"]["applications"][0]["rMessage"];
     }
 }

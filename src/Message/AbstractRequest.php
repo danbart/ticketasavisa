@@ -6,12 +6,15 @@ use Omnipay\Ticketasavisa\Exception\InvalidResponseData;
 use Omnipay\Ticketasavisa\Support\Cryptor;
 use Omnipay\Ticketasavisa\Support\ParametersInterface;
 use Omnipay\Ticketasavisa\Constants;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 implements ParametersInterface
 {
 
     protected $data = [];
+    protected $encripted;
     protected $commonHeaders = [
         'Accept'       => 'application/json',
         'Content-Type' => 'application/json',
@@ -22,7 +25,7 @@ implements ParametersInterface
             "response" => "HostedPageResponse",
         ],
         "TransactionStatus" => [
-            "request"  => "transactions",
+            "request"  => "Transactions",
             "response" => "TransactionStatusResponse",
         ],
         "RefundPayment"     => [
@@ -43,17 +46,7 @@ implements ParametersInterface
 
                 $this->addCommonHeaders($data);
 
-                $endpoint = "tss/v2/" . $this->PWTServices[$this->getMessageClassName()]["request"] . "/" . $data["TransactionIdentifier"];
-                $uri = $this->getEndpoint() . $endpoint;
-
-                $this->commonHeaders["Signature"] = strval($this->getSignature($endpoint, 'get', null));
-                $this->commonHeaders["Host"] = $this->getEndpoint();
-                $this->commonHeaders["v-c-merchant-id"] = $this->getMerchantId();
-                $this->commonHeaders["Date"] = $this->getDate();
-
-                unset($this->commonHeaders["merchant_id"]);
-                unset($this->commonHeaders["merchant_key_id"]);
-                unset($this->commonHeaders["merchant_secret_key"]);
+                $uri = $this->getEndpoint();
 
                 $httpResponse = $this->httpClient->request(
                     "GET",
@@ -97,13 +90,16 @@ implements ParametersInterface
         $this->commonHeaders['merchant_id'] = $this->getMerchantId();
         $this->commonHeaders['merchant_key_id'] = $this->getPublicKey();
         $this->commonHeaders['merchant_secret_key'] = $this->getPrivateKey();
+        $this->encript($data, $this->getPrivateKey());
 
         return $this;
     }
 
     protected function getEndpoint()
     {
-        return ($this->getTestMode()) ? Constants::API_STAGING : Constants::API_PRODUCTION;
+
+        return ($this->getTestMode() ? Constants::PLATFORM_TA_UAT : Constants::PLATFORM_TA_PROD)
+            . '/fetchTransaction?data=' . $this->getEncript();
     }
 
     public function getMessageClassName()
@@ -193,6 +189,19 @@ implements ParametersInterface
     public function getDate()
     {
         return date("D, d M Y G:i:s");
+    }
+
+    public function getEncript()
+    {
+        return $this->encripted;
+    }
+
+    protected function encript($data, $key)
+    {
+        unset($data[Constants::CONFIG_MERCHANT_ID]);
+        unset($data[Constants::CONFIG_PUBLIC_KEY]);
+        unset($data[Constants::CONFIG_PRIVATE_KEY]);
+        $this->encripted = Cryptor::encrypt(json_encode($data), $key);
     }
 
     // Function used to generate the digest for the given payload
