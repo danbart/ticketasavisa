@@ -7,60 +7,40 @@ class RefundPaymentResponse extends AbstractResponse
 
     public function isSuccessful()
     {
-        if (!empty($this->getData()["IsoResponseCode"] == "00")) {
+        if (!empty($this->getData()["code"] == "400") && !empty($this->getData()["code"] == "404")) {
             return true;
         }
 
         return false;
     }
 
-    public function getApproved()
-    {
-        return $this->getData()["Approved"];
-    }
-
     public function getTotalAmount()
     {
-        return $this->getData()["TotalAmount"];
+        return $this->getData()["data"]["refundAmountDetails"]["refundAmount"];
     }
 
-    public function getRRN()
+    public function getIdentifier()
     {
-        return $this->getData()["RRN"];
-    }
-
-    public function getExternalIdentifier()
-    {
-        return $this->getData()["ExternalIdentifier"];
+        return $this->getData()["data"]["id"];
     }
 
     public function getOrderIdentifier()
     {
-        return $this->getData()["OrderIdentifier"];
+        return $this->getData()["data"]["clientReferenceInformation"]["code"];
     }
 
-    public function getOriginalTrxnIdentifier()
+    public function getReconciliationIdentifier()
     {
-        return $this->getData()["OriginalTrxnIdentifier"];
+        return $this->getData()["data"]["reconciliationId"];
     }
 
-    public function getErrorCode()
+    public function getStatus()
     {
-        return $this->getData()["Errors"][0]["Code"];
-    }
-
-    public function getErrorMessage()
-    {
-        return $this->getData()["Errors"][0]["Message"];
-    }
-
-    public function getIsoResponseCode()
-    {
-        return $this->getData()["IsoResponseCode"];
+        return $this->getData()["data"]["status"];
     }
 
     public function getResponseMessage()
     {
-        return $this->getData()["ResponseMessage"];
+        return $this->getData()["message"];
     }
 }

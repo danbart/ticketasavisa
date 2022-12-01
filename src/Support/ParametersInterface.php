@@ -19,4 +19,8 @@ interface ParametersInterface
     public function setDiscount($value);
 
     public function getDiscount();
+
+    public function setOrderIdentifier($value);
+
+    public function getOrderIdentifier();
 }

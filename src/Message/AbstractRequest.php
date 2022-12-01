@@ -65,15 +65,13 @@ implements ParametersInterface
 
                 $requestBody = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-                $uri = $this->getEndpoint() . $this->PWTServices[$this->getMessageClassName()]["request"];
-
-                //                  print_r($requestBody);
+                $uri = $this->getEndpointRefaund();
 
                 $httpResponse = $this->httpClient->request(
-                    "POST",
+                    "GET",
                     $uri,
                     $this->commonHeaders,
-                    $requestBody
+                    null //$requestBody
                 );
 
                 return $this->response = new RefundPaymentResponse($this, $httpResponse);
@@ -97,10 +95,16 @@ implements ParametersInterface
 
     protected function getEndpoint()
     {
-
         return ($this->getTestMode() ? Constants::PLATFORM_TA_UAT : Constants::PLATFORM_TA_PROD)
             . '/fetchTransaction?data=' . $this->getEncript();
     }
+
+    protected function getEndpointRefaund()
+    {
+        return ($this->getTestMode() ? Constants::PLATFORM_TA_UAT : Constants::PLATFORM_TA_PROD)
+            . '/refaundTransaction?data=' . $this->getEncript();
+    }
+
 
     public function getMessageClassName()
     {

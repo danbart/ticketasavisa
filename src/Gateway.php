@@ -120,15 +120,13 @@ class Gateway extends AbstractGateway implements ParametersInterface
         return $this->getParameter(Constants::CONFIG_APPLY_DISCOUNT);
     }
 
-    //    public function getTransactionIdB()
-    //    {
-    //        return $this->getParameter(Constants::CONFIG_TRANSACTION_IDENTIFIER);
-    //    }
-    //
-    //    public function setTransactionIdB($value)
-    //    {
-    //       // print_r($ID);
-    //        return $this->setParameter(Constants::CONFIG_TRANSACTION_IDENTIFIER, $value);
-    //    }
+    public function setOrderIdentifier($value)
+    {
+        return $this->setParameter(Constants::GATEWAY_ORDER_IDENTIFIER, $value);
+    }
 
+    public function getOrderIdentifier()
+    {
+        return $this->getParameter(Constants::GATEWAY_ORDER_IDENTIFIER);
+    }
 }

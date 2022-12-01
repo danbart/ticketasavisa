@@ -24,6 +24,7 @@ class RefundPayment extends AbstractRequest
     const PARAM_TERMINAL_SERIAL     = 'TerminalSerialNumber';
     const PARAM_EXTERNAL_IDENTIFIER = 'ExternalIdentifier';
     const PARAM_ADDRESS             = 'AddressMatch';
+    const PARAM_ORDER_IDENTIFIER    = 'OrderIdentifier';
     protected $TransactionDetails = [];
 
     public function getData()
@@ -43,6 +44,7 @@ class RefundPayment extends AbstractRequest
         $this->TransactionDetails[self::PARAM_TERMINAL_SERIAL] = "";
         $this->TransactionDetails[self::PARAM_EXTERNAL_IDENTIFIER] = $this->getTransactionId();
         $this->TransactionDetails[self::PARAM_ADDRESS] = false;
+        $this->TransactionDetails[self::PARAM_ORDER_IDENTIFIER] = $this->getOrderIdentifier();
 
         $this->validateTransactionDetails();
         $this->setCredentials();
