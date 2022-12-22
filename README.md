@@ -73,17 +73,19 @@ Response transaction from TicketasaGT.
 
 ```php
 {
-  "TransactionType": 1,
-  "Approved": true,  // must be true
-  "AuthorizationCode": "123456", // Authorization number from bank
-  "TransactionIdentifier": "3dbff695-d7e0-4e90-8187-1e93cf13bb40", // Order Number
-  "TotalAmount": 1,  //Mount
-  "CurrencyCode": "320", 
-  "RRN": "227603509881",
-  "CardBrand": "Visa",
-  "IsoResponseCode": "00", 
-  "ResponseMessage": "Transaction is approved", // Message Approvement.
-  "OrderIdentifier": "TICKET-ASA-3dbff695-d7e0-4e90-8187-1e93cf13bb40" // Order Identifier PREFIX +  Order Number
+    "clientReferenceInformation": {
+        "code": "VlISZ4VI2kKFcz07JELCTw2"
+    },
+    "id": "6638930703846085404953",
+    "orderInformation": {
+        "amountDetails": {
+            "totalAmount": "1.00",
+            "currency": "GTQ"
+        }
+    },
+    "reconciliationId": "6638927696246293304951",
+    "status": "PENDING",
+    "submitTimeUtc": "2022-09-23T00:31:10Z"
 }
 ```
 
@@ -124,39 +126,100 @@ try {
 }
 ```
 
-***PowerTranz response***
+***Visa Cybersource response***
 Response fetch transaction from powerTranz.
 
 ```php
 {
-    "AuthorizationCode": "123456",
-    "CurrencyCode": "320",
-    "IsoResponseCode": "00", // successfull is 00
-    "OrderSummary": {
-        "CaptureCount": 1,
-        "CreditCount": 0,
-        "CurrencyCode": "320",
-        "LastCaptureDateTime": "2022-10-31T21:38:49.663",
-        "OrderIdentifier": "TICKET-ASA-4e895e54-3f5a-428c-ac30-1c0e7bd8ab86",
-        "OriginalTrxnDateTime": "2022-10-31T21:38:49.663",
-        "OriginalTrxnIdentifier": "4e895e54-3f5a-428c-ac30-1c0e7bd8ab86",
-        "SettledAmount": 1.00,
-        "TotalCaptureAmount": 1.00,
-        "TotalCreditAmount": 0.00
+  "code": "200",
+  "message": "OK",
+  "data": {
+    "id": "6696797642706350904957",
+    "rootId": "6696797642706350904957",
+    "reconciliationId": "6696797642706350904957",
+    "submitTimeUTC": "2022-11-28T23:56:04Z",
+    "merchantId": "ticketasa",
+    "applicationInformation": {
+      "reasonCode": 100,
+      "applications": [
+        {
+          "name": "ics_auth",
+          "reasonCode": "100",
+          "rCode": "1",
+          "rFlag": "SOK",
+          "reconciliationId": "6696797642706350904957",
+          "rMessage": "Request was processed successfully.",
+          "returnCode": 1010000
+        }
+      ]
     },
-    "OtherAmount": 0.00,
-    "TaxAmount": 0.00,
-    "TipAmount": 0.00,
-    "TotalAmount": 1.00,
-    "TransactionDateTime": "2022-10-31T21:38:20.193",
-    "TransactionIdentifier": "4e895e54-3f5a-428c-ac30-1c0e7bd8ab86",
-    "TransactionType": 2
+    "clientReferenceInformation": {
+      "code": "f780fd1b-30c6-47f6-aab0-a796161c7bde",
+      "applicationName": "REST API",
+      "applicationVersion": "1.0"
+    },
+    "orderInformation": {
+      "amountDetails": {
+        "totalAmount": "1",
+        "currency": "GTQ",
+        "taxAmount": "0",
+        "authorizedAmount": "1"
+      },
+      "lineItems": [
+        {
+          "productCode": "default",
+          "taxAmount": 0,
+          "quantity": 1,
+          "unitPrice": 1
+        }
+      ]
+    },
+    "paymentInformation": {
+      "paymentType": {
+        "name": "vguatemala",
+        "type": "credit card",
+        "method": "VI"
+      },
+      "card": {
+        "suffix": "3495",
+        "prefix": "491681",
+        "expirationMonth": "02",
+        "expirationYear": "2026",
+        "type": "001"
+      },
+    },
+    "processingInformation": {
+      "paymentSolution": "Visa",
+      "commerceIndicator": "7",
+      "commerceIndicatorLabel": "internet",
+      },
+      "fundingOptions": {
+        "firstRecurringPayment": false
+      },
+      "ecommerceIndicator": "7"
+    },
+    "riskInformation": {
+      "profile": {
+        "name": "Perfil de Pruebas CVV2",
+        "decision": "ACCEPT"
+      },
+      "score": {
+        "factorCodes": [
+          "C",
+          "H",
+          "P",
+          "F"
+        ],
+        "result": 48
+      }
+    }
+  }
 }
 ```
 
 ### Refund Payment (Direct Integration)
 
-'**fetchTransaction**' required. TransactionId
+'**fetchTransaction**' required. TransactionId, OrderIdentifier and amount
 
 ``` php
 
@@ -171,47 +234,51 @@ try {
     
     $transactionData = [      
          'amount' => '1.00',   // Mandatory         
-        'TransactionId' => '2100001',  // mandatory, must be unique in each transaction
+         'TransactionId' => '6694214339196447904951',  // mandatory, must be unique in each transaction
+        'OrderIdentifier' => '2100001',  // mandatory, must be unique in each transaction
     ];
 
     $response = $gateway->refund($transactionData)->send();
     
     $response->getData();  //return the response object
-    $response->isSuccessful() //  if Approved response
-    $response->getExternalIdentifier() // return transactionId from object response
-    $response->getTotalAmount() // return Amount from object response
-    $response->getOriginalTrxnIdentifier() // return transactionId from object response
-    $response->getErrorCode() // return the error code
-    $response->getErrorMessage() // return  the error message
-    $response->getIsoResponseCode() // return the iso Code
-    $response->getResponseMessage() // return  the error general message
+    $response->isSuccessful(); //  if Approved response
+    $response->getIdentifier(); // return transactionId from object response
+    $response->getTotalAmount(); // return Amount from object response
+    $response->getOrderIdentifier(); // return transactionId from object response
+    $response->getReconciliationIdentifier(); // return transactionId from object response
+    $response->getStatus(); // return the iso Code
+    $response->getResponseMessage(); // return  the error general message
 
 } catch (Exception $e){
     $e->getMessage();
 }
 ```
 
-***PowerTranz response***
+***Visa Cybersource response***
 Response refund Transaction from powerTranz.
 
 ```php
 {
-    "OriginalTrxnIdentifier": "a",
-    "TransactionType": 5,
-    "Approved": false,
-    "TransactionIdentifier": "27909349-a43f-411a-9cc1-1ec6e3ab4d89",
-    "TotalAmount": 1.00,
-    "CurrencyCode": "220",
-    "RRN": "230714276757",
-    "IsoResponseCode": "96",
-    "ResponseMessage": "System error",
-    "ExternalIdentifier": "-81aa-42c1-960e-6b535c5f4ae3",
-    "Errors": [
-        {
-            "Code": "451",
-            "Message": "General processor error"
-        }
-    ]
+  "code": "200",
+  "message": "OK",
+  "data": {
+    "clientReferenceInformation": {
+      "code": "f780fd1b-30c6-47f6-aab0-a796161c7bde"
+    },
+    "id": "6697696378546596504952",
+    "orderInformation": {
+      "amountDetails": {
+        "currency": "GTQ"
+      }
+    },
+    "reconciliationId": "6694214339196447904951",
+    "refundAmountDetails": {
+      "currency": "GTQ",
+      "refundAmount": "1.00"
+    },
+    "status": "PENDING",
+    "submitTimeUtc": "2022-11-30T00:53:58Z"
+  }
 }
 ```
 
@@ -221,5 +288,5 @@ If you are having general issues with Omnipay, we suggest posting on [Stack Over
 sure to add the [omnipay tag](http://stackoverflow.com/questions/tagged/omnipay) so it can be easily found.
 
 If you believe you have found a bug, please report it using
-the [GitHub issue tracker](https://github.com/edgarvicentesuc/PowerTranz.git/issues), or better yet, fork the library
+the [GitHub issue tracker](https://github.com/danbart/ticketasavisa.git/issues), or better yet, fork the library
 and submit a pull request.

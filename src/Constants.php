@@ -7,11 +7,11 @@ class Constants
 
     const API_STAGING                      = 'https://apitest.cybersource.com/';
     const API_PRODUCTION                   = 'https://api.cybersource.com/';
-    const SPI_STAGING                      = 'https://staging.ptranz.com/api/spi/';
-    const SPI_PRODUCTION                   = 'https://gateway.ptranz.com/api/spi/';
+    const SPI_STAGING                      = '';
+    const SPI_PRODUCTION                   = '';
     const DRIVER_NAME                      = "TicketAsaVisa - Payment Gateway";
-    const PLATFORM_TA_UAT                  = 'https://ticketasa-cred.mypeopleapps.com/eventix';
-    const PLATFORM_TA_PROD                 = 'https://credomatic.ticketasa.gt/eventix';
+    const PLATFORM_TA_UAT                  = 'https://ticketasa-visa.mypeopleapps.com';
+    const PLATFORM_TA_PROD                 = 'https://visa.ticketasa.gt';
     const CONFIG_MERCHANT_ID               = 'MerchantId';
     const CONFIG_PUBLIC_KEY                = 'PublicKey';
     const CONFIG_PRIVATE_KEY               = 'PrivateKey';
